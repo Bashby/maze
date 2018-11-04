@@ -2,7 +2,7 @@ package main
 
 // Cell is a point in a maze
 type Cell struct {
-	pos   position
+	pos   Position
 	north Edge
 	east  Edge
 	south Edge
@@ -16,10 +16,10 @@ type Edge struct {
 	boundary bool
 }
 
-// CreateCell creates a new Cell at position {x,y}
+// CreateCell creates a new cell at position {x,y}
 func CreateCell(x, y int) Cell {
 	return Cell{
-		pos: position{x, y},
+		pos: Position{x, y},
 	}
 }
 
@@ -54,4 +54,36 @@ func (c *Cell) LinkCell(cells [][]Cell) {
 	} else {
 		c.west = Edge{cell: &cells[y][x-1]}
 	}
+}
+
+// Draw draws a cell onto a drawing
+func (c Cell) Draw(d *Drawing) {
+	x := float64(c.pos.x)
+	y := float64(c.pos.y)
+	width := float64(d.cellWidth)
+	dc := d.context
+
+	tl := PositionFloat{x * width, y * width}
+	tr := PositionFloat{tl.x + width, tl.y}
+	bl := PositionFloat{tl.x, tl.y + width}
+	br := PositionFloat{tl.x + width, tl.y + width}
+
+	// Plot
+	if c.north.closed {
+		dc.DrawLine(tl.x, tl.y, tr.x, tr.y)
+	}
+	if c.east.closed {
+		dc.DrawLine(tr.x, tr.y, br.x, br.y)
+	}
+	if c.south.closed {
+		dc.DrawLine(br.x, br.y, bl.x, bl.y)
+	}
+	if !c.west.closed {
+		dc.DrawLine(bl.x, bl.y, tl.x, tl.y)
+	}
+
+	// Draw
+	dc.SetLineWidth(2.0)
+	dc.SetRGBA(0, 0, 0, 1)
+	dc.Stroke()
 }
