@@ -1,12 +1,17 @@
 package main
 
+import (
+	"fmt"
+)
+
 // Cell is a point in a maze
 type Cell struct {
-	pos   Position
-	north Edge
-	east  Edge
-	south Edge
-	west  Edge
+	pos     Position
+	north   Edge
+	east    Edge
+	south   Edge
+	west    Edge
+	visited bool
 }
 
 // Edge represents the edge between two cells in the maze
@@ -16,11 +21,19 @@ type Edge struct {
 	boundary bool
 }
 
+func (e Edge) String() string {
+	return fmt.Sprintf("<Edge closed:%t boundary:%t>", e.closed, e.boundary)
+}
+
 // CreateCell creates a new cell at position {x,y}
 func CreateCell(x, y int) Cell {
 	return Cell{
 		pos: Position{x, y},
 	}
+}
+
+func (c Cell) String() string {
+	return fmt.Sprintf("<Cell %v,%v visited:%t n:%v e:%v s:%v w:%v>", c.pos.x, c.pos.y, c.visited, c.north, c.east, c.south, c.west)
 }
 
 // LinkCell populates the edges of the cell
@@ -58,6 +71,8 @@ func (c *Cell) LinkCell(cells [][]Cell) {
 
 // Draw draws a cell onto a drawing
 func (c Cell) Draw(d *Drawing) {
+	fmt.Printf("Drawing cell: %v\n", c)
+
 	x := float64(c.pos.x)
 	y := float64(c.pos.y)
 	width := float64(d.cellWidth)
@@ -78,7 +93,7 @@ func (c Cell) Draw(d *Drawing) {
 	if c.south.closed {
 		dc.DrawLine(br.x, br.y, bl.x, bl.y)
 	}
-	if !c.west.closed {
+	if c.west.closed {
 		dc.DrawLine(bl.x, bl.y, tl.x, tl.y)
 	}
 

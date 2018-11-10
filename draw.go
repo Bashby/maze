@@ -1,8 +1,6 @@
 package main
 
 import (
-	"image/color"
-
 	"github.com/fogleman/gg"
 )
 
@@ -24,7 +22,7 @@ func NewDrawing(maze Maze, cellWidth int) Drawing {
 
 	// Fill background
 	dc.DrawRectangle(0, 0, float64(dc.Width()), float64(dc.Height()))
-	dc.SetColor(color.White)
+	dc.SetRGBA(0.9, 0.9, 0.9, 1.0)
 	dc.Fill()
 	return Drawing{context: dc, cellWidth: cellWidth, cells: maze.cells}
 }

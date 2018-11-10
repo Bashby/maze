@@ -15,7 +15,9 @@ type PositionFloat struct {
 }
 
 func main() {
-	var width, height int = 29, 23
+	fmt.Println("Starting...")
+
+	var width, height int = 5, 5
 	maze := CreateMaze(width, height)
 	drawing := NewDrawing(maze, 20)
 	drawing.DrawCells()
