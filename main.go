@@ -1,27 +1,39 @@
 package main
 
-import "fmt"
+import (
+	"flag"
+	"math/rand"
+	"time"
 
-// Position is a point in a 2d coordinate system
-type Position struct {
-	x int
-	y int
-}
+	log "github.com/sirupsen/logrus"
 
-// PositionFloat is a point in a 2d coordinate system, using floats
-type PositionFloat struct {
-	x float64
-	y float64
-}
+	"github.com/bashby/maze/maze"
+)
 
 func main() {
-	fmt.Println("Starting...")
+	log.Info("Starting...")
 
-	var width, height int = 5, 5
-	maze := CreateMaze(width, height)
-	drawing := NewDrawing(maze, 20)
-	drawing.DrawCells()
-	drawing.Save("maze.png")
+	// Arguments
+	widthPtr := flag.Int("width", 5, "maze width, in cells")
+	heightPtr := flag.Int("height", 5, "maze height, in cells")
+	debugPtr := flag.Bool("debug", false, "debug mode; high verbosity")
+	randSeedPtr := flag.Int64("seed", time.Now().UTC().UnixNano(), "pseudo RNG seed")
+	flag.Parse()
 
-	fmt.Println("Done!")
+	// Seed pRNG
+	rand.Seed(*randSeedPtr)
+
+	// Handle debugging
+	if *debugPtr {
+		log.SetLevel(log.DebugLevel)
+	}
+
+	// Generate maze
+	maze := maze.Create(*widthPtr, *heightPtr, maze.GrowingTree50Split)
+	log.Debug(maze)
+
+	// Render maze
+	maze.Save("maze.png")
+
+	log.Info("Done!")
 }
