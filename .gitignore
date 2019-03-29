@@ -1,3 +1,8 @@
+### CUSTOM ###
+*.png
+!static/logo.png
+
+### GOLANG ###
 # Binaries for programs and plugins
 *.exe
 *.exe~
